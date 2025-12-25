@@ -58,7 +58,7 @@ class GameController:
         while not self.winner:
             dice_number = self.dice.roll()
             active_player = self.players.popleft()
-            print("Active player:", active_player.id)
+            print(f"Active player: {active_player.id} got {dice_number}")
             position = active_player.position + dice_number
             if position == self.board.size*self.board.size-1:
                 active_player.position = position
@@ -68,8 +68,10 @@ class GameController:
                 while self.board.cells[position].snake != None and self.board.cells[position].ladder != None:
                     if self.board.cells[position].ladder:
                         position = self.board.cells[position].ladder.end
+                        print(f"Player {active_player.id} took the ladder to cell {position+1}")
                     if self.board.cells[position].snake:
                         position = self.board.cells[position].snake.end
+                        print(f"Player {active_player.id} bitten by snake to cell {position+1}")
                 active_player.position = position
             self.players.append(active_player)
 
@@ -77,14 +79,14 @@ if __name__=="__main__":
     try:
         board = Board(10)
         dice = Dice()
-        no_of_players = 2
+        no_of_players = 4
         players = deque()
         for i in range(no_of_players):
             players.append(Player(i+1, str(i)))
 
         controller = GameController(board, dice, players)
-        snakes = controller.generate_snakes(5)
-        ladders = controller.generate_ladders(5)
+        snakes = controller.generate_snakes(10)
+        ladders = controller.generate_ladders(10)
         board.initialize_snakes(snakes)
         board.initialize_ladders(ladders)
         controller.play()
